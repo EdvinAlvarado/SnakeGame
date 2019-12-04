@@ -12,11 +12,9 @@ DOWN = 4
 SNAKE_MARKER = 1
 BODY_MARKER = 2
 APPLE_MARKER = 3
- 
 
 def intrandom(maximum):
 	return int(random() * maximum)
- 
 
 class Snake: 
 
@@ -71,7 +69,7 @@ class Snake:
 			body.pop()
 
 	def drawGround():
-		ground = [[0 * WIDTH] * HEIGHT]
+		ground = [[0]*WIDTH] * HEIGHT
 		ground[apple[1]][apple[0]] = APPLE_MARKER
 		for i in range(length):
 					ground[body[i][1], body[i][0]] = SNAKE_MARKER if i == 0 else BODY_MARKER

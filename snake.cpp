@@ -5,13 +5,12 @@
 #include <array>
 #include <chrono>
 #include <thread>
-#include <stdlib.h> //system access
-#include <curses.h>
+//#include <stdlib.h> //system access
+#include <ncurses.h>
 #include <panel.h>
 #include <random>
 //#include <tuple>
 #include <deque>
-#include <windows.h>
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 #define HEIGHT 40
 #define WIDTH 40
@@ -24,6 +23,7 @@
 #define LEFT 3
 #define DOWN 4
 #define INIT_DIRECTION RIGHT
+#define ESCAPE 27 //ASCII code for Esc
 /*
 	  w
 	a + d
@@ -39,6 +39,7 @@ struct coordinate {
 	int y;
 };
 
+
 class Snake
 {
 	private:
@@ -47,13 +48,13 @@ class Snake
 		std::deque<coordinate> body;
 		std::array<std::array<int, WIDTH>, HEIGHT> ground = {}; //ground[y][x]
 		coordinate apple;
+		void AnimationPrint(std::array<std::array<int, WIDTH>, HEIGHT> &matrix, WINDOW * windows);
 	public:
 		void initSnake();
 		void updateApple();
 		void directionHandler(char input);
 		void updateSnake();
-		void contactHandler();
-		void drawGround();
+		void drawGround(WINDOW * windows);
 };
 
 void Snake::initSnake() // Set for right direction
@@ -103,39 +104,58 @@ void Snake::updateSnake()
 			body.push_front({body[0].x, body[0].y - 1});
 			break;
 	}
-}
 
-void Snake::contactHandler()
-{
 	if 		(body[0].x < 0) {body[0].x = WIDTH;}
 	else if (body[0].y < 0) {body[0].y = HEIGHT;}
 	else if (body[0].x > WIDTH) {body[0].x = 0;}
 	else if (body[0].y > HEIGHT) {body[0].y = 0;}
+
+	while (body.size() > length) {body.pop_back();} // keeps body lean
 }
 
-void Snake::drawGround()
-{
-	while (body.size() > length) {body.pop_back();} // keeps body lean
+void Snake::AnimationPrint(std::array<std::array<int, WIDTH>, HEIGHT> &matrix, WINDOW * windows) {
+	wborder(windows, 0, 0, 0, 0, 0, 0, 0, 0);
+	for (int y = 0; y < HEIGHT; y++) {
+		for (int x = 0; x < WIDTH; x++) {
+			if (matrix[y][x] == SNAKE_MARKER) {waddch(windows, 'O');} 
+			else if (matrix[y][x] = BODY_MARKER ) {waddch(windows, '+');}
+			else if (matrix[y][x] = APPLE_MARKER ) {waddch(windows, '@');}
+			else {waddch(windows, ' ');}
+		}
+	}
+	wmove(windows, 0, 0);
+	wrefresh(windows);
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+}
+
+void Snake::drawGround(WINDOW * windows)
+{	
 	ground = {};
 	ground[apple.y][apple.x] = APPLE_MARKER;
 	ground[body[0].y][body[0].x] = SNAKE_MARKER;
 	for (int i = 1; i < body.size() - 1; i++) {
 		ground[body[i].y][body[i].x] = BODY_MARKER;
 	}
+	AnimationPrint(ground, windows);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////
 int main()
 {
-	bool exitFlag = false; // establish exit input
+	bool exitFlag = false; // establish exit
+	char input;	
+	WINDOW * win = newwin(HEIGHT, WIDTH, 0, 0);
+
+	initscr();
 	Snake nagini;
 	nagini.initSnake();
-	char input = 'd'; // placeholder for input'
 	nagini.updateApple();
+
 	while (exitFlag != true) {
+		std::cin >> input;
+		if (input = ESCAPE) {exitFlag == true;}
 		nagini.directionHandler(input);
 		nagini.updateSnake();
-		nagini.contactHandler();
-		nagini.drawGround();
+		nagini.drawGround(win);
 	}
 	return 0;
 }
