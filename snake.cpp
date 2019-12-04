@@ -60,7 +60,6 @@ void Snake::initSnake() // Set for right direction
 {
 	for (int i = 0; i < INIT_SNAKE_LENGTH; i++ ) {
 		body[i].x = (WIDTH / 2) - i;
-		body[i].y = (HEIGHT / 2) - i;
 	}
 };
 
