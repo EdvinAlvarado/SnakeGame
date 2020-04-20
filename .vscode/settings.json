@@ -1,6 +1,10 @@
 {
     "python.linting.pylintEnabled": false,
     "python.linting.pycodestyleEnabled": false,
+    "python.linting.flake8Args": ["--ignore=W191,E117,W292"],
     "python.linting.enabled": true,
-    "python.linting.flake8Enabled": true
+    "python.linting.flake8Enabled": true,
+    "files.associations": {
+        "array": "cpp"
+    }
 }

@@ -13,10 +13,12 @@ SNAKE_MARKER = 1
 BODY_MARKER = 2
 APPLE_MARKER = 3
 
+
 def intrandom(maximum):
 	return int(random() * maximum)
 
-class Snake: 
+
+class Snake:
 
 	def __init__(self, body, ground, apple, length=4, direction=RIGHT):
 		self.length = length
@@ -25,12 +27,12 @@ class Snake:
 		self.ground = ground
 		self.apple = apple
 
-	def initSnake(self):
+	def initSnake(self, length):
 		body = [(int(WIDTH / 2), int(HEIGHT / 2))]
 		for i in range(length):
 					body.append((body[i][0] - 1, body[i][1]))
 
-	def updateApple(self):
+	def updateApple(self, apple):
 		apple = (intrandom(WIDTH), intrandom(HEIGHT))
 
 	# add other input here
@@ -69,7 +71,7 @@ class Snake:
 			body.pop()
 
 	def drawGround():
-		ground = [[0]*WIDTH] * HEIGHT
+		ground = [[0] * WIDTH] * HEIGHT
 		ground[apple[1]][apple[0]] = APPLE_MARKER
 		for i in range(length):
 					ground[body[i][1], body[i][0]] = SNAKE_MARKER if i == 0 else BODY_MARKER
