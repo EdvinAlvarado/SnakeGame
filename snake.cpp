@@ -64,6 +64,8 @@ class Snake
 		void clearGround(WINDOW * windows);
 };
 
+
+// Prints out location of the snake body.
 void Snake::printBody()
 {
 	for (auto&& i: body) {
@@ -72,19 +74,23 @@ void Snake::printBody()
 	std::cout << std::endl;
 }
 
-void Snake::initSnake() // Set for right direction
+// Initializes the snake's body as if moving to the right.
+void Snake::initSnake()
 {
 	for (int i = 0; i < INIT_SNAKE_LENGTH; i++ ) {
 		body.push_back({(WIDTH / 2) - i, HEIGHT / 2});
 	}
 };
 
+// Randomely sets the apple
+// Pending: avoid overlapping with snake.
 void Snake::updateApple() 
 {
 	apple.x = rand() % (WIDTH + 1);
 	apple.y = rand() % (HEIGHT + 1);
 }
 
+// Updates direction to keyboard input.
 // the top left is (0,0), meaning that the y axis is inverted.
 void Snake::directionHandler(char input) 
 {
@@ -104,9 +110,11 @@ void Snake::directionHandler(char input)
 	}
 }
 
+// Handles updating body
 void Snake::updateSnake() 
 {
-	switch(direction) { // adds the next position to the front of the deque.
+	// adds the next position to the front of the deque.
+	switch(direction) {
 		case RIGHT:
 			body.push_front({body[0].x + 1, body[0].y});
 			break;
@@ -127,9 +135,11 @@ void Snake::updateSnake()
 	else if (body[0].x > WIDTH) {body[0].x = 0;}
 	else if (body[0].y > HEIGHT) {body[0].y = 0;}
 
-	while (body.size() > length) {body.pop_back();} // keeps body lean
+	// Maintains the length of the body.
+	while (body.size() > length) {body.pop_back();} 
 }
 
+// Draws snake and apple
 void Snake::AnimationPrint(WINDOW * windows) {
 	wborder(windows, 0, 0, 0, 0, 0, 0, 0, 0);
 	for (int y = 0; y < HEIGHT; y++) {
@@ -145,23 +155,7 @@ void Snake::AnimationPrint(WINDOW * windows) {
 	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
 
-void Snake::drawGround(WINDOW * windows)
-{	
-	
-	for (int y; y < HEIGHT; y++) {
-		for (int x; x < WIDTH; x++) {
-			ground[y][x] = 0;
-		}
-	}
-
-	ground[apple.y][apple.x] = APPLE_MARKER;
-	ground[body[0].y][body[0].x] = SNAKE_MARKER;
-	for (int i = 1; i < body.size(); i++) {
-		ground[body[i].y][body[i].x] = BODY_MARKER;
-	}
-	AnimationPrint(windows);
-}
-
+// Clears drawing
 void Snake::clearGround(WINDOW * windows)
 {
 	wborder(windows, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -174,6 +168,27 @@ void Snake::clearGround(WINDOW * windows)
 	wrefresh(windows);
 }
 
+// Handles animation.
+void Snake::drawGround(WINDOW * windows)
+{	
+	// Clears ground and drawing
+	for (int y; y < HEIGHT; y++) {
+		for (int x; x < WIDTH; x++) {
+			ground[y][x] = 0;
+		}
+	}
+	clearGround(windows);
+
+	// Writes the markers to ground and prints it
+	ground[apple.y][apple.x] = APPLE_MARKER;
+	ground[body[0].y][body[0].x] = SNAKE_MARKER;
+	for (int i = 1; i < body.size(); i++) {
+		ground[body[i].y][body[i].x] = BODY_MARKER;
+	}
+	AnimationPrint(windows);
+}
+
+// Necessary???
 void Snake::writeGround()
 {
 	for (int y; y < HEIGHT; y++) {
@@ -191,7 +206,8 @@ void Snake::writeGround()
 ////////////////////////////////////////////////////////////////////////////////////////////
 int main()
 {
-	initscr();
+	// Setup the ncurses and windows.
+	initscr(); 
 	noecho();
 	cbreak();
 	WINDOW * win = newwin(HEIGHT, WIDTH, 0, 0);
@@ -201,16 +217,17 @@ int main()
 	bool exitFlag = false; // establish exit
 	int input;		
 
-
+	// Startup game
 	nagini.initSnake();
 	nagini.updateApple();
 
+	// Game Loop
 	while (exitFlag != true) {
 		input = wgetch(win);
 		if (input == KEY_BACKSPACE) {exitFlag == true;}
 		nagini.directionHandler(input);
 		nagini.updateSnake();
-		nagini.clearGround(win);
+		//nagini.clearGround(win);
 		nagini.drawGround(win);
 	}
 	endwin();
