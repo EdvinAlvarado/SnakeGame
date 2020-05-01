@@ -188,21 +188,6 @@ void Snake::drawGround(WINDOW * windows)
 	AnimationPrint(windows);
 }
 
-// Necessary???
-void Snake::writeGround()
-{
-	for (int y; y < HEIGHT; y++) {
-		for (int x; x < WIDTH; x++) {
-			ground[y][x] = 0;
-		}
-	}
-
-	ground[apple.y][apple.x] = APPLE_MARKER;
-	ground[body[0].y][body[0].x] = SNAKE_MARKER;
-	for (int i = 1; i < body.size(); i++) {
-		ground[body[i].y][body[i].x] = BODY_MARKER;
-	}
-}
 ////////////////////////////////////////////////////////////////////////////////////////////
 int main()
 {

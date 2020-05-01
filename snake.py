@@ -22,56 +22,56 @@ class Snake:
 
 	def __init__(self, body, ground, apple, length=4, direction=RIGHT):
 		self.length = length
-		self.direction = direction
-		self.body = body
+		self.self.direction = direction
+		self.self.body = body
 		self.ground = ground
 		self.apple = apple
 
 	def initSnake(self, length):
-		body = [(int(WIDTH / 2), int(HEIGHT / 2))]
+		self.body = [(int(WIDTH / 2), int(HEIGHT / 2))]
 		for i in range(length):
-					body.append((body[i][0] - 1, body[i][1]))
+					self.body.append((self.body[i][0] - 1, self.body[i][1]))
 
 	def updateApple(self, apple):
-		apple = (intrandom(WIDTH), intrandom(HEIGHT))
+		self.apple = (intrandom(WIDTH), intrandom(HEIGHT))
 
 	# add other input here
-	def inputHandler(keyInput):
+	def inputHandler(self, keyInput):
 
 		if keyInput == 'd':
-			direction = RIGHT if direction != LEFT else direction
+			self.direction = RIGHT if self.direction != LEFT else self.direction
 		elif keyInput == 'w':
-			direction = UP if direction != DOWN else direction
+			self.direction = UP if self.direction != DOWN else self.direction
 		elif keyInput == 'a':
-			direction = LEFT if direction != RIGHT else direction
+			self.direction = LEFT if self.direction != RIGHT else self.direction
 		elif keyInput == 's':
-			direction = DOWN if direction != UP else direction
+			self.direction = DOWN if self.direction != UP else self.direction
 
-	def updateSnake():
+	def updateSnake(self):
 
-		if direction == RIGHT:
-					body.insert(0, (body[0][0] + 1, body[0][1]))
-		elif direction == UP:
-					body.insert(0, (body[0][0], body[0][1] + 1))
-		elif direction == LEFT:
-					body.insert(0, (body[0][0] - 1, body[0][1]))
-		elif direction == DOWN:
-					body.insert(0, (body[0][0], body[0][1] - 1))
+		if self.direction == RIGHT:
+					self.body.insert(0, (self.body[0][0] + 1, self.body[0][1]))
+		elif self.direction == UP:
+					self.body.insert(0, (self.body[0][0], self.body[0][1] + 1))
+		elif self.direction == LEFT:
+					self.body.insert(0, (self.body[0][0] - 1, self.body[0][1]))
+		elif self.direction == DOWN:
+					self.body.insert(0, (self.body[0][0], self.body[0][1] - 1))
 
-		if body[0][0] < 0:
-			body[0][0] = WIDTH
-		elif body[0][0] > WIDTH:
-			body[0][0] = 0
-		elif body[0][1] < 0:
-			body[0][1] = HEIGHT
-		elif body[0][1] > HEIGHT:
-			body[0][1] = 0
+		if self.body[0][0] < 0:
+			self.body[0][0] = WIDTH
+		elif self.body[0][0] > WIDTH:
+			self.body[0][0] = 0
+		elif self.body[0][1] < 0:
+			self.body[0][1] = HEIGHT
+		elif self.body[0][1] > HEIGHT:
+			self.body[0][1] = 0
 
-		while len(body) > length:
-			body.pop()
+		while len(self.body) > self.length:
+			self.body.pop()
 
-	def drawGround():
-		ground = [[0] * WIDTH] * HEIGHT
-		ground[apple[1]][apple[0]] = APPLE_MARKER
-		for i in range(length):
-					ground[body[i][1], body[i][0]] = SNAKE_MARKER if i == 0 else BODY_MARKER
+	def drawGround(self):
+		self.ground = [[0] * WIDTH] * HEIGHT
+		self.ground[self.apple[1]][self.apple[0]] = APPLE_MARKER
+		for i in range(self.length):
+					self.ground[self.body[i][1], self.body[i][0]] = SNAKE_MARKER if i == 0 else BODY_MARKER
