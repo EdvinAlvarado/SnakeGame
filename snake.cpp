@@ -19,13 +19,20 @@
 #undef INIT_SNAKE_LENGTH
 #define INIT_SNAKE_LENGTH WIDTH 
 #endif
-#define SNAKE_MARKER 1
-#define BODY_MARKER 2
-#define APPLE_MARKER 3
-#define RIGHT 1
-#define UP 2
-#define LEFT 3
-#define DOWN 4
+
+enum groundFlags {
+	SNAKE_MARKER = 1,
+	BODY_MARKER,
+	APPLE_MARKER
+};
+
+enum directions {
+	RIGHT = 1,
+	UP,
+	LEFT,
+	DOWN
+};
+
 #define INIT_DIRECTION RIGHT
 #define ESCAPE (char)27 //ASCII code for Esc
 /*
@@ -152,7 +159,7 @@ void Snake::AnimationPrint(WINDOW * windows) {
 	}
 	wmove(windows, 0, 0);
 	wrefresh(windows);
-	std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
 // Clears drawing
