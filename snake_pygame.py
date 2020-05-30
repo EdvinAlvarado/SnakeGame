@@ -111,22 +111,24 @@ class Snake:
 					self.ground[self.body[i][1]][self.body[i][0]] = SNAKE_MARKER if i == 0 else BODY_MARKER
 
 
+# --------------------------------------------------------------------
 hebi = Snake()
 hebi.initSnake()
 hebi.updateApple()
 hebi.drawGround()
 
 IMAGES = [images.empty, images.snake, images.body, images.apple]
+SNAKEHEAD = [images.empty, images.snakeright, images.snakeup, images.snakeleft, images.snakedown]
 
 def draw():
 	for y in range(gridHeight):
 		for x in range(gridWidth):
-			image_to_draw = IMAGES[hebi.ground[y][x]]
+			image_to_draw = SNAKEHEAD[hebi.direction] if IMAGES[hebi.ground[y][x]] == images.snake else IMAGES[hebi.ground[y][x]]
 			screen.blit(
 				image_to_draw,
 				(
 					x*32,
-					y*32 
+					y*32
 				)
 			)
 
