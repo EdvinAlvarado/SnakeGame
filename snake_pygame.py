@@ -1,10 +1,11 @@
 from random import seed
 from random import random
+from time import time
 
 
-seed(1)
-gridHeight = 10
-gridWidth = 10
+seed(time())
+gridHeight = 20
+gridWidth = 20
 HEIGHT = gridHeight * 32
 WIDTH = gridWidth * 32
 RIGHT = 1
@@ -25,6 +26,9 @@ class Snake:
 	body = []
 	apple = (intrandom(gridWidth), intrandom(gridHeight))
 	ground = [[0] * gridWidth for _ in range(gridHeight)]
+	deadFlag = False
+	deadAnimation = RIGHT
+	deadPosition = []
 
 	def __init__(self, length=4, direction=RIGHT):
 		self.length = length
@@ -35,8 +39,9 @@ class Snake:
 		global gridWidth, gridHeight
 
 		self.body = [[int(gridWidth / 2), int(gridHeight / 2)]]
+		# assumes initiated to the right
 		for i in range(self.length):
-					self.body.append([self.body[i][0] - 1, self.body[i][1]])
+			self.body.append([self.body[i][0] - 1, self.body[i][1]])
 
 	# add feature to not overlap with snake.
 	def updateApple(self):
@@ -70,7 +75,7 @@ class Snake:
 					self.body.insert(0, [self.body[0][0] - 1, self.body[0][1]])
 		elif self.direction == DOWN:
 					self.body.insert(0, [self.body[0][0], self.body[0][1] + 1])
-		# Check if the change was ok
+		# wraps the map.
 		if self.body[0][0] < 0:
 			self.body[0][0] = gridWidth - 1
 		elif self.body[0][0] >= gridWidth:
@@ -100,15 +105,31 @@ class Snake:
 			while self.snakeTouch():
 				self.updateApple()
 
+	def ouroboros(self):
+		for i in range(1, len(self.body)):
+			if self.body[i] == self.body[0]:
+				self.deadFlag = True
+				self.deadPosition = self.body[0]
+				self.direction = RIGHT
+				return True
+		return False
+
+	# def gameover(self):
+	# 	if self.ouroboros():
+
 	def drawGround(self):
 
 		global SNAKE_MARKER, BODY_MARKER, APPLE_MARKER, gridWidth, gridHeight
 
 		self.appleEater()
 		self.ground = [[0] * gridWidth for _ in range(gridHeight)]
-		self.ground[self.apple[1]][self.apple[0]] = APPLE_MARKER
-		for i in range(len(self.body)):
-					self.ground[self.body[i][1]][self.body[i][0]] = SNAKE_MARKER if i == 0 else BODY_MARKER
+		if self.ouroboros() or self.deadFlag:
+			self.ground[self.deadPosition[1]][self.deadPosition[0]] = SNAKE_MARKER
+			self.direction += 1
+		else:
+			self.ground[self.apple[1]][self.apple[0]] = APPLE_MARKER
+			for i in range(len(self.body)):
+						self.ground[self.body[i][1]][self.body[i][0]] = SNAKE_MARKER if i == 0 else BODY_MARKER
 
 
 # --------------------------------------------------------------------
@@ -123,7 +144,7 @@ SNAKEHEAD = [images.empty, images.snakeright, images.snakeup, images.snakeleft, 
 def draw():
 	for y in range(gridHeight):
 		for x in range(gridWidth):
-			image_to_draw = SNAKEHEAD[hebi.direction] if IMAGES[hebi.ground[y][x]] == images.snake else IMAGES[hebi.ground[y][x]]
+			image_to_draw = SNAKEHEAD[hebi.direction if hebi.direction <= 4 else 2] if IMAGES[hebi.ground[y][x]] == images.snake else IMAGES[hebi.ground[y][x]]
 			screen.blit(
 				image_to_draw,
 				(
@@ -138,12 +159,11 @@ def game_loop():
 	hebi.inputHandler()
 	hebi.updateSnake()
 	hebi.drawGround()
-	print(hebi.body[0])
 
 
 clock.schedule_interval(game_loop, 0.1)
 
-
+print("score: {}".format(hebi.length))
 print(hebi.body)
 print(hebi.apple)
 print(hebi.direction)
