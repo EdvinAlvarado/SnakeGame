@@ -9,15 +9,15 @@
 #include <ncurses.h>
 #include <panel.h>
 #include <random>
-//#include <tuple>
 #include <deque>
 
+// larger than 127 will need a change of struct coordinate.
 #define HEIGHT 40
 #define WIDTH 40
 #define INIT_SNAKE_LENGTH 4 // Can't be longer than the WIDTH
 #if INIT_SNAKE_LENGTH>WIDTH
-#undef INIT_SNAKE_LENGTH
-#define INIT_SNAKE_LENGTH WIDTH 
+	#undef INIT_SNAKE_LENGTH
+	#define INIT_SNAKE_LENGTH WIDTH/2
 #endif
 
 enum groundFlags {
@@ -25,14 +25,12 @@ enum groundFlags {
 	BODY_MARKER,
 	APPLE_MARKER
 };
-
 enum directions {
 	RIGHT = 1,
 	UP,
 	LEFT,
 	DOWN
 };
-
 #define INIT_DIRECTION RIGHT
 #define ESCAPE (char)27 //ASCII code for Esc
 /*
@@ -44,10 +42,9 @@ enum directions {
 	3 + 1
 	  4
 */
-
 struct coordinate {
-	int x;
-	int y;
+	char x;
+	char y;
 };
 
 
@@ -137,10 +134,10 @@ void Snake::updateSnake()
 	}
 
 	// wraps the snake vertically and horizontally.
-	if 		(body[0].x < 0) {body[0].x = WIDTH;}
-	else if (body[0].y < 0) {body[0].y = HEIGHT;}
-	else if (body[0].x > WIDTH) {body[0].x = 0;}
-	else if (body[0].y > HEIGHT) {body[0].y = 0;}
+	if 		(body[0].x < 0) {body[0].x = WIDTH-1;}
+	else if (body[0].y < 0) {body[0].y = HEIGHT-1;}
+	else if (body[0].x >= WIDTH) {body[0].x = 0;}
+	else if (body[0].y >= HEIGHT) {body[0].y = 0;}
 
 	// Maintains the length of the body.
 	while (body.size() > length) {body.pop_back();} 
@@ -151,10 +148,10 @@ void Snake::AnimationPrint(WINDOW * windows) {
 	wborder(windows, 0, 0, 0, 0, 0, 0, 0, 0);
 	for (int y = 0; y < HEIGHT; y++) {
 		for (int x = 0; x < WIDTH; x++) {
-			if (ground[y][x] == SNAKE_MARKER) {waddch(windows, 'O');} 
-			else if (ground[y][x] == BODY_MARKER ) {waddch(windows, '+');}
-			else if (ground[y][x] == APPLE_MARKER ) {waddch(windows, '@');}
-			else {waddch(windows, ' ');}
+			if      (ground[y][x] == SNAKE_MARKER) {waddch(windows, 'O');} 
+			else if (ground[y][x] == BODY_MARKER)  {waddch(windows, '+');}
+			else if (ground[y][x] == APPLE_MARKER) {waddch(windows, '@');}
+			else                                   {waddch(windows, ' ');}
 		}
 	}
 	wmove(windows, 0, 0);
